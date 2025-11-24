@@ -1,4 +1,4 @@
-package options;
+'noteSkin' options;
 
 import objects.Note;
 import objects.StrumNote;
@@ -37,7 +37,7 @@ class VisualsUISubState extends BaseOptionsMenu
 
 			noteSkins.insert(0, ClientPrefs.defaultData.noteSkin); //Default skin always comes first
 			var option:Option = new Option('Note Skins:',
-				"Select your prefered Note skin.",
+				"Select your favorite note skin.",
 				'noteSkin',
 				'string',
 				noteSkins);
