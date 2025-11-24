@@ -1,5 +1,3 @@
-'noteSkin' options;
-
 import objects.Note;
 import objects.StrumNote;
 import objects.Alphabet;
