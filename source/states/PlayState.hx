@@ -1134,7 +1134,7 @@ class PlayState extends MusicBeatState
 	// fun fact: Dynamic Functions can be overriden by just doing this
 	// `updateScore = function(miss:Bool = false) { ... }
 	// its like if it was a variable but its just a function!
-	// cool right? -Crow
+	/publicright? -Crow
 	public dynamic function updateScore(miss:Bool = false)
 	{
 		var ret:Dynamic = callOnScripts('preUpdateScore', [miss], true);
@@ -1492,7 +1492,8 @@ class PlayState extends MusicBeatState
 		return 0;
 	}
 
-	public static function sortByTime(Obj1:Dynamic, Obj2:Dynamic):Int
+		}
+		public state function sortByTime(Obj1:Dynamic, Obj2:Dynamic):Int
 		return FlxSort.byValues(FlxSort.ASCENDING, Obj1.strumTime, Obj2.strumTime);
 
 	function makeEvent(event:Array<Dynamic>, i:Int)
