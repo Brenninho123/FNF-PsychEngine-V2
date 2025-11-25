@@ -9,7 +9,7 @@ import options.OptionsState;
 
 class MainMenuState extends MusicBeatState
 {
-	public static var psychEngineVersion:String = '0.7.5'; // This is also used for Discord RPC
+	public static var psychEngineVersion:String = '0.7.6'; // This is also used for Discord RPC
 	public static var curSelected:Int = 0;
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
@@ -25,8 +25,6 @@ class MainMenuState extends MusicBeatState
 		#if ACHIEVEMENTS_ALLOWED
 		'awards',
 		#end
-		
-		'credits',
 		
 		#if !switch
 		'donate',
@@ -102,7 +100,7 @@ class MainMenuState extends MusicBeatState
 		psychVer.scrollFactor.set();
 		psychVer.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(psychVer);
-		var fnfVer:FlxText = new FlxText(12, FlxG.height - 24, 0, "Funkin' v" + Application.current.meta.get('version'), 12);
+		var fnfVer:FlxText = new FlxText(12, FlxG.height - 24, 0, "FNF' v" + Application.current.meta.get('version'), 12);
 		fnfVer.scrollFactor.set();
 		fnfVer.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(fnfVer);
@@ -187,9 +185,7 @@ class MainMenuState extends MusicBeatState
 							case 'awards':
 								MusicBeatState.switchState(new AchievementsMenuState());
 							#end
-
-							case 'credits':
-								MusicBeatState.switchState(new CreditsState());
+								
 							case 'options':
 								MusicBeatState.switchState(new OptionsState());
 								OptionsState.onPlayState = false;
@@ -255,8 +251,6 @@ class MainMenuState extends MusicBeatState
 								MusicBeatState.switchState(new AchievementsMenuState());
 							#end
 
-							case 'credits':
-								MusicBeatState.switchState(new CreditsState());
 							case 'options':
 								MusicBeatState.switchState(new OptionsState());
 								OptionsState.onPlayState = false;
