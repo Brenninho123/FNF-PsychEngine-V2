@@ -1128,7 +1128,6 @@ class PlayState extends MusicBeatState
 				invalidateNote(daNote);
 			}
 			--i;
-		}
 	}
 
 	// fun fact: Dynamic Functions can be overriden by just doing this
