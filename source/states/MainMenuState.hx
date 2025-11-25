@@ -20,16 +20,7 @@ class MainMenuState extends MusicBeatState
 		
 		#if MODS_ALLOWED
 		'mods',
-		#end
-		
-		#if ACHIEVEMENTS_ALLOWED
-		'awards',
-		#end
-		
-		#if !switch
-		'donate',
-		#end
-		
+		#end		
 		'options'
 	];
 
@@ -179,13 +170,7 @@ class MainMenuState extends MusicBeatState
 							#if MODS_ALLOWED
 							case 'mods':
 								MusicBeatState.switchState(new ModsMenuState());
-							#end
-
-							#if ACHIEVEMENTS_ALLOWED
-							case 'awards':
-								MusicBeatState.switchState(new AchievementsMenuState());
-							#end
-								
+							#end							
 							case 'options':
 								MusicBeatState.switchState(new OptionsState());
 								OptionsState.onPlayState = false;
@@ -246,12 +231,7 @@ class MainMenuState extends MusicBeatState
 								MusicBeatState.switchState(new ModsMenuState());
 							#end
 
-							#if ACHIEVEMENTS_ALLOWED
-							case 'awards':
-								MusicBeatState.switchState(new AchievementsMenuState());
-							#end
-
-							case 'options':
+								case 'options':
 								MusicBeatState.switchState(new OptionsState());
 								OptionsState.onPlayState = false;
 								if (PlayState.SONG != null)
