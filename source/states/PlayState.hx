@@ -1128,11 +1128,13 @@ class PlayState extends MusicBeatState
 				invalidateNote(daNote);
 			}
 			--i;
+		}
 	}
 
 	// fun fact: Dynamic Functions can be overriden by just doing this
 	// `updateScore = function(miss:Bool = false) { ... }
 	// its like if it was a variable but its just a function!
+	}
 	/publicright? -Crow
 	public dynamic function updateScore(miss:Bool = false)
 	{
