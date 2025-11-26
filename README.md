@@ -1,4 +1,4 @@
-# Friday Night Funkin' - Psych Engine V2 Template
+# Friday Night Funkin' - Psych Engine V2
 
 Psych Engine V2 is a Fork for Psych Engine 0.7.3 But Many Modded XD
 ![special](docs/img/special.png)
