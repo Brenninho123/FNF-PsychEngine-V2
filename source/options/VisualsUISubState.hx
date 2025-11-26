@@ -72,6 +72,12 @@ class VisualsUISubState extends BaseOptionsMenu
 		option.decimals = 1;
 		addOption(option);
 
+  var option:Option = new Option('Note Splash RGB',
+			'If you prefer not to use RGB color, disable it.',
+			'splashRGB',
+			'bool');
+		addOption(option);
+
 		var option:Option = new Option('Hide HUD',
 			'If checked, hides most HUD elements.',
 			'hideHud',
