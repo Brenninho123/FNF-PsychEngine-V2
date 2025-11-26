@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Friday Night Funkin': Psych Engine V2" file="PsychEngineV2" packageName="com.brenninho.psychenginev2" package="com.brenninho.psychenginev2" main="Main" version="0.3.1" company="Brenninho" />
+	<app title="Friday Night Funkin': Psych Engine V2" file="PsychEngineV2" packageName="com.brenninho.psychenginev2" package="com.brenninho.psychenginev2" main="Main" version="0.3.2" company="Brenninho" />
 
 	<!--Switch Export with Unique ApplicationID and Icon-->
 	<set name="APP_ID" value="0x0100f6c013bbc000" />
