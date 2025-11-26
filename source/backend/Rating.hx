@@ -33,7 +33,7 @@ class Rating
 		var rating:Rating = new Rating('good');
 		rating.ratingMod = 0.67;
 		rating.score = 200;
-		rating.noteSplash = false;
+		rating.noteSplash = true;
 		ratingsData.push(rating);
 
 		var rating:Rating = new Rating('bad');
