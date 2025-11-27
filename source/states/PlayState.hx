@@ -1149,7 +1149,7 @@ class PlayState extends MusicBeatState
 		}
 
 		var tempScore:String = 'Score: ${songScore}'
-		+ (!instakillOnMiss ? ' / Combo Break: ${songMisses}' : "")
+		+ (!instakillOnMiss ? ' / Combo Breakes: ${songMisses}' : "")
 		+ ' / Accurate: ${str}';
 		// "tempScore" variable is used to prevent another memory leak, just in case
 		// "\n" here prevents the text from being cut off by beat zooms
@@ -1171,13 +1171,13 @@ class PlayState extends MusicBeatState
 		ratingFC = "";
 		if(songMisses == 0)
 		{
-			if (bads > 0 || shits > 0) ratingFC = 'FC';
-			else if (goods > 0) ratingFC = 'GFC';
-			else if (sicks > 0) ratingFC = 'SFC';
+			if (bads > 0 || shits > 0) ratingFC = 'Full Combo';
+			else if (goods > 0) ratingFC = 'Good Full Combo';
+			else if (sicks > 0) ratingFC = 'Sick Full Combo';
 		}
 		else {
-			if (songMisses < 10) ratingFC = 'SDCB';
-			else ratingFC = 'Clear';
+			if (songMisses < 10) ratingFC = 'Not Full Combo';
+			else ratingFC = 'Not a Combo';
 		}
 	}
 
