@@ -41,6 +41,10 @@ import psychlua.HScript;
 import psychlua.HScript;
 #end
 
+#if JAVA_SCRIPT_ALLOWED
+import psychlua.JScript;
+#end
+
 import psychlua.DebugLuaText;
 import psychlua.ModchartSprite;
 
