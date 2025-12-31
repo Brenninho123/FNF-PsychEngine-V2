@@ -5,6 +5,7 @@ import openfl.text.TextField;
 import openfl.text.TextFormat;
 import openfl.system.System as OpenFlSystem;
 import lime.system.System as LimeSystem;
+import openfl.display.Sprite;
 
 /**
 	The FPS class provides an easy-to-use monitor to display
@@ -35,9 +36,17 @@ class FPSCounter extends TextField
 
 	public var os:String = '';
 
-	public function new(x:Float = 10, y:Float = 10, color:Int = 0x000000)
+	private var background:Sprite;
+
+	public function new(x:Float = 10, y:Float = 10, color:Int = 0xFFFFFF)
 	{
 		super();
+
+		// Criar fundo preto semi-transparente
+		background = new Sprite();
+		background.graphics.beginFill(0x000000, 0.5); // preto com 50% de opacidade
+		background.graphics.drawRect(0, 0, FlxG.width, 50); // altura inicial 50px
+		background.graphics.endFill();
 
 		if (LimeSystem.platformName == LimeSystem.platformVersion || LimeSystem.platformVersion == null)
 			os = '\nOS: ${LimeSystem.platformName}' #if cpp + ' ${getArch() != 'Unknown' ? getArch() : ''}' #end;
@@ -62,7 +71,6 @@ class FPSCounter extends TextField
 	// Event Handlers
 	private override function __enterFrame(deltaTime:Float):Void
 	{
-		// prevents the overlay from updating every frame, why would you need to anyways
 		if (deltaTimeout > 1000) {
 			deltaTimeout = 0.0;
 			return;
@@ -77,7 +85,7 @@ class FPSCounter extends TextField
 		deltaTimeout += deltaTime;
 	}
 
-	public dynamic function updateText():Void // so people can override it in hscript
+	public dynamic function updateText():Void
 	{
 		text = 
 		'FPS: $currentFPS' + 
@@ -87,6 +95,12 @@ class FPSCounter extends TextField
 		textColor = 0xFFFFFFFF;
 		if (currentFPS < FlxG.drawFramerate * 0.5)
 			textColor = 0xFFFF0000;
+
+		// Atualizar tamanho do fundo conforme texto
+		background.graphics.clear();
+		background.graphics.beginFill(0x000000, 0.5);
+		background.graphics.drawRect(0, 0, width, height + 10); // +10 para padding
+		background.graphics.endFill();
 	}
 
 	inline function get_memoryMegas():Float
@@ -96,6 +110,10 @@ class FPSCounter extends TextField
 		scaleX = scaleY = #if android (scale > 1 ? scale : 1) #else (scale < 1 ? scale : 1) #end;
 		x = FlxG.game.x + X;
 		y = FlxG.game.y + Y;
+
+		// Posicionar fundo atrás do texto
+		background.x = x;
+		background.y = y;
 	}
 
 	#if cpp
@@ -107,18 +125,12 @@ class FPSCounter extends TextField
 
 		switch(osInfo.wProcessorArchitecture)
 		{
-			case 9:
-				return ::String("x86_64");
-			case 5:
-				return ::String("ARM");
-			case 12:
-				return ::String("ARM64");
-			case 6:
-				return ::String("IA-64");
-			case 0:
-				return ::String("x86");
-			default:
-				return ::String("Unknown");
+			case 9: return ::String("x86_64");
+			case 5: return ::String("ARM");
+			case 12: return ::String("ARM64");
+			case 6: return ::String("IA-64");
+			case 0: return ::String("x86");
+			default: return ::String("Unknown");
 		}
 	')
 	#elseif (ios || mac)
