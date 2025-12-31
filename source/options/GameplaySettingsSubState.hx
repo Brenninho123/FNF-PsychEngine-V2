@@ -1,19 +1,19 @@
 package options;
 
 import lime.ui.Haptic;
+import flixel.FlxG;
 
 class GameplaySettingsSubState extends BaseOptionsMenu
 {
 	public function new()
 	{
-		title = 'Gameplay Settings';
-		rpcTitle = 'Gameplay Settings Menu'; //for Discord Rich Presence
+		title = 'Preferences Settings';
+		rpcTitle = 'Preferences Settings Menu';
 
-		//I'd suggest using "Downscroll" as an example for making your own option since it is the simplest here
-		var option:Option = new Option('Downscroll', //Name
-			'If checked, notes go Down instead of Up, simple enough.', //Description
-			'downScroll', //Save data variable name
-			'bool'); //Variable type
+		var option:Option = new Option('Downscroll',
+			'If checked, notes go Down instead of Up, simple enough.',
+			'downScroll',
+			'bool');
 		addOption(option);
 
 		var option:Option = new Option('Middlescroll',
@@ -60,8 +60,32 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		addOption(option);
 		option.onChange = onChangeVibration;
 
+		// -------------------------
+		// NOVAS OPÇÕES
+		// -------------------------
+
+		var option:Option = new Option('Show FPS',
+			'If checked, shows the FPS counter on screen.',
+			'showFPS',
+			'bool');
+		addOption(option);
+
+		var option:Option = new Option('FPS Background',
+			'If checked, FPS counter will have a black background.',
+			'fpsBackground',
+			'bool');
+		addOption(option);
+
+		var option:Option = new Option('Note Hit Vibration',
+			'If checked, your device vibrates when hitting notes.',
+			'noteHitVibration',
+			'bool');
+		addOption(option);
+
+		// -------------------------
+
 		var option:Option = new Option('Hitsound Volume',
-			'Funny notes does \"Tick!\" when you hit them.',
+			'Funny notes does "Tick!" when you hit them.',
 			'hitsoundVolume',
 			'percent');
 		addOption(option);
@@ -139,7 +163,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 
 	function onChangeVibration()
 	{
-		if(ClientPrefs.data.gameOverVibration)
+		if (ClientPrefs.data.gameOverVibration)
 		{
 			Haptic.vibrate(0, 500);
 		}
