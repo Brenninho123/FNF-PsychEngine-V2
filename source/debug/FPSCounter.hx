@@ -7,10 +7,6 @@ import openfl.system.System as OpenFlSystem;
 import lime.system.System as LimeSystem;
 import openfl.display.Sprite;
 
-/**
-	The FPS class provides an easy-to-use monitor to display
-	the current frame rate of an OpenFL project
-**/
 #if cpp
 #if windows
 @:cppFileCode('#include <windows.h>')
@@ -22,31 +18,22 @@ import openfl.display.Sprite;
 #end
 class FPSCounter extends TextField
 {
-	/**
-		The current frame rate, expressed using frames-per-second
-	**/
 	public var currentFPS(default, null):Int;
-
-	/**
-		The current memory usage (WARNING: this is NOT your total program memory usage, rather it shows the garbage collector memory)
-	**/
 	public var memoryMegas(get, never):Float;
-
 	@:noCompletion private var times:Array<Float>;
-
 	public var os:String = '';
 
-	private var background:Sprite;
+	private var bgSprite:Sprite;
 
 	public function new(x:Float = 10, y:Float = 10, color:Int = 0xFFFFFF)
 	{
 		super();
 
 		// Criar fundo preto semi-transparente
-		background = new Sprite();
-		background.graphics.beginFill(0x000000, 0.5); // preto com 50% de opacidade
-		background.graphics.drawRect(0, 0, FlxG.width, 50); // altura inicial 50px
-		background.graphics.endFill();
+		bgSprite = new Sprite();
+		bgSprite.graphics.beginFill(0x000000, 0.5);
+		bgSprite.graphics.drawRect(0, 0, FlxG.width, 50);
+		bgSprite.graphics.endFill();
 
 		if (LimeSystem.platformName == LimeSystem.platformVersion || LimeSystem.platformVersion == null)
 			os = '\nOS: ${LimeSystem.platformName}' #if cpp + ' ${getArch() != 'Unknown' ? getArch() : ''}' #end;
@@ -68,7 +55,6 @@ class FPSCounter extends TextField
 
 	var deltaTimeout:Float = 0.0;
 
-	// Event Handlers
 	private override function __enterFrame(deltaTime:Float):Void
 	{
 		if (deltaTimeout > 1000) {
@@ -97,10 +83,10 @@ class FPSCounter extends TextField
 			textColor = 0xFFFF0000;
 
 		// Atualizar tamanho do fundo conforme texto
-		background.graphics.clear();
-		background.graphics.beginFill(0x000000, 0.5);
-		background.graphics.drawRect(0, 0, width, height + 10); // +10 para padding
-		background.graphics.endFill();
+		bgSprite.graphics.clear();
+		bgSprite.graphics.beginFill(0x000000, 0.5);
+		bgSprite.graphics.drawRect(0, 0, width, height + 10);
+		bgSprite.graphics.endFill();
 	}
 
 	inline function get_memoryMegas():Float
@@ -112,8 +98,8 @@ class FPSCounter extends TextField
 		y = FlxG.game.y + Y;
 
 		// Posicionar fundo atrás do texto
-		background.x = x;
-		background.y = y;
+		bgSprite.x = x;
+		bgSprite.y = y;
 	}
 
 	#if cpp
