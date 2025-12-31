@@ -60,10 +60,6 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		addOption(option);
 		option.onChange = onChangeVibration;
 
-		// -------------------------
-		// NOVAS OPÇÕES
-		// -------------------------
-
 		var option:Option = new Option('Show FPS',
 			'If checked, shows the FPS counter on screen.',
 			'showFPS',
@@ -81,8 +77,7 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 			'noteHitVibration',
 			'bool');
 		addOption(option);
-
-		// -------------------------
+  option.onChange = onChangeVibration;
 
 		var option:Option = new Option('Hitsound Volume',
 			'Funny notes does "Tick!" when you hit them.',
