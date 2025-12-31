@@ -1,6 +1,5 @@
 package psychlua;
 
-import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.util.FlxColor;
 import flixel.math.FlxMath;
@@ -36,11 +35,10 @@ class HScript extends SScript
 
 	public static function initHaxeModuleCode(parent:FunkinLua, code:String, ?varsToBring:Any = null)
 	{
-		var hs:HScript = parent.hscript;
-		if (hs == null)
+		if (parent.hscript == null)
 			parent.hscript = new HScript(parent, code, varsToBring);
 		else
-			hs.doString(code);
+			parent.hscript.doString(code);
 	}
 
 	var varsToBring:Any = null;
@@ -70,7 +68,7 @@ class HScript extends SScript
 		super.preset();
 
 		// ===============================
-		// CORE CLASSES
+		// CORE
 		// ===============================
 		set('FlxG', FlxG);
 		set('FlxMath', FlxMath);
@@ -91,20 +89,20 @@ class HScript extends SScript
 		// ===============================
 		// VARIABLES
 		// ===============================
-		set('setVar', function(name:String, value:Dynamic)
+		set('setVar', (name:String, value:Dynamic) ->
 		{
 			PlayState.instance.variables.set(name, value);
 			return value;
 		});
 
-		set('getVar', function(name:String)
+		set('getVar', (name:String) ->
 		{
 			return PlayState.instance.variables.exists(name)
 				? PlayState.instance.variables.get(name)
 				: null;
 		});
 
-		set('removeVar', function(name:String)
+		set('removeVar', (name:String) ->
 		{
 			return PlayState.instance.variables.remove(name);
 		});
@@ -112,26 +110,26 @@ class HScript extends SScript
 		// ===============================
 		// DEBUG
 		// ===============================
-		set('debugPrint', function(text:String, ?color:Int = null)
+		set('debugPrint', (text:String, ?color:Int = null) ->
 		{
 			if (color == null) color = FlxColor.WHITE;
 			PlayState.instance.addTextToDebug(text, color);
 		});
 
 		// ===============================
-		// SONG / TIMING (CORRIGIDO)
+		// SONG / TIMING (SAFE)
 		// ===============================
 		set('getSongTime', () -> Conductor.songPosition);
 		set('getSongTimeSeconds', () -> Conductor.songPosition / 1000);
 
 		set('getBeat', () ->
 		{
-			return PlayState.instance != null ? PlayState.instance.curBeat : 0;
+			return Math.floor(Conductor.songPosition / Conductor.crochet);
 		});
 
 		set('getStep', () ->
 		{
-			return PlayState.instance != null ? PlayState.instance.curStep : 0;
+			return Math.floor(Conductor.songPosition / Conductor.stepCrochet);
 		});
 
 		// ===============================
@@ -144,7 +142,7 @@ class HScript extends SScript
 
 		set('pauseGame', () ->
 		{
-			if (PlayState.instance != null && !PlayState.instance.paused)
+			if (!PlayState.instance.paused)
 			{
 				PlayState.instance.paused = true;
 				FlxG.sound.music.pause();
@@ -153,7 +151,7 @@ class HScript extends SScript
 
 		set('resumeGame', () ->
 		{
-			if (PlayState.instance != null && PlayState.instance.paused)
+			if (PlayState.instance.paused)
 			{
 				PlayState.instance.paused = false;
 				FlxG.sound.music.resume();
@@ -163,17 +161,17 @@ class HScript extends SScript
 		// ===============================
 		// CAMERA
 		// ===============================
-		set('cameraShake', function(intensity:Float, duration:Float)
+		set('cameraShake', (intensity:Float, duration:Float) ->
 		{
 			FlxG.camera.shake(intensity, duration);
 		});
 
-		set('cameraFlash', function(color:Int, duration:Float)
+		set('cameraFlash', (color:Int, duration:Float) ->
 		{
 			FlxG.camera.flash(color, duration);
 		});
 
-		set('cameraFade', function(color:Int, duration:Float, ?fadeIn:Bool = false)
+		set('cameraFade', (color:Int, duration:Float, ?fadeIn:Bool = false) ->
 		{
 			FlxG.camera.fade(color, duration, fadeIn);
 		});
@@ -197,9 +195,6 @@ class HScript extends SScript
 			#end
 		});
 
-		// ===============================
-		// LUA LINK
-		// ===============================
 		#if LUA_ALLOWED
 		set('parentLua', parentLua);
 		#else
@@ -209,13 +204,10 @@ class HScript extends SScript
 		set('this', this);
 		set('game', FlxG.state);
 
-		// ===============================
-		// BRING VARS
-		// ===============================
 		if (varsToBring != null)
 		{
-			for (key in Reflect.fields(varsToBring))
-				set(key, Reflect.field(varsToBring, key));
+			for (k in Reflect.fields(varsToBring))
+				set(k, Reflect.field(varsToBring, k));
 			varsToBring = null;
 		}
 	}
@@ -269,9 +261,8 @@ class HScript extends SScript
 
 class CustomFlxColor
 {
-	public static var TRANSPARENT(default, null):Int = FlxColor.TRANSPARENT;
-	public static var BLACK(default, null):Int = FlxColor.BLACK;
 	public static var WHITE(default, null):Int = FlxColor.WHITE;
+	public static var BLACK(default, null):Int = FlxColor.BLACK;
 	public static var RED(default, null):Int = FlxColor.RED;
 	public static var GREEN(default, null):Int = FlxColor.GREEN;
 	public static var BLUE(default, null):Int = FlxColor.BLUE;
