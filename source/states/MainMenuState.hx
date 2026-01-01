@@ -1,14 +1,15 @@
 package states;
 
-import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.FlxG;
 import flixel.text.FlxText;
-import flixel.util.FlxColor;
+import flixel.FlxBasic;
 import flixel.effects.FlxFlicker;
-import flixel.group.FlxGroup;
 import flixel.tweens.FlxTween;
-import flixel.tweens.easing.*;
+import flixel.tweens.misc.VarTween;
+import flixel.util.FlxColor;
+import flixel.addons.transition.FlxTransitionableState;
 import lime.app.Application;
 
 import states.editors.MasterEditorMenu;
@@ -16,18 +17,16 @@ import options.OptionsState;
 
 class MainMenuState extends MusicBeatState
 {
-	public static var psychEngineVersion:String = "0.7.7"; // This is also used for Discord RPC
+	public static var psychEngineVersion:String = "0.7.7";
 	public static var curSelected:Int = 0;
 
-	var menuItems:FlxGroup<FlxSprite>;
+	var menuItems:FlxGroup;
 	var optionShit:Array<String> = [
 		"story_mode",
 		"freeplay",
-		
 		#if MODS_ALLOWED
 		"mods",
 		#end
-		
 		"options"
 	];
 
@@ -48,7 +47,6 @@ class MainMenuState extends MusicBeatState
 
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
-
 		persistentUpdate = persistentDraw = true;
 
 		var yScroll:Float = Math.max(0.25 - (0.05 * (optionShit.length - 4)), 0.1);
@@ -74,7 +72,7 @@ class MainMenuState extends MusicBeatState
 		magenta.color = 0xFFfd719b;
 		add(magenta);
 
-		menuItems = new FlxGroup<FlxSprite>();
+		menuItems = new FlxGroup();
 		add(menuItems);
 
 		for (i in 0...optionShit.length)
@@ -89,8 +87,7 @@ class MainMenuState extends MusicBeatState
 			menuItems.add(menuItem);
 
 			var scr:Float = (optionShit.length - 4) * 0.135;
-			if (optionShit.length < 6)
-				scr = 0;
+			if (optionShit.length < 6) scr = 0;
 			menuItem.scrollFactor.set(0, scr);
 			menuItem.updateHitbox();
 			menuItem.screenCenter(X);
@@ -123,7 +120,6 @@ class MainMenuState extends MusicBeatState
 		#end
 
 		super.create();
-
 		FlxG.camera.follow(camFollow, null, 9);
 	}
 
@@ -138,11 +134,8 @@ class MainMenuState extends MusicBeatState
 
 		if (!selectedSomethin)
 		{
-			if (controls.UI_UP_P)
-				changeItem(-1);
-			if (controls.UI_DOWN_P)
-				changeItem(1);
-
+			if (controls.UI_UP_P) changeItem(-1);
+			if (controls.UI_DOWN_P) changeItem(1);
 			if (controls.BACK)
 			{
 				selectedSomethin = true;
@@ -152,86 +145,41 @@ class MainMenuState extends MusicBeatState
 
 			#if mobile
 			if (controls.ACCEPT)
-			{
-				handleSelection();
-			}
+				handleAccept();
 			else if (controls.justPressed("debug_1") || touchPad.buttonE.justPressed)
-			{
-				selectedSomethin = true;
-				MusicBeatState.switchState(new MasterEditorMenu());
-			}
+				openEditor();
 			#else
 			if (controls.ACCEPT)
-				handleSelection();
+				handleAccept();
 			else if (controls.justPressed("debug_1"))
-			{
-				selectedSomethin = true;
-				MusicBeatState.switchState(new MasterEditorMenu());
-			}
+				openEditor();
 			#end
 		}
 
 		super.update(elapsed);
 	}
 
-	function changeItem(huh:Int = 0)
-	{
-		FlxG.sound.play(Paths.sound("scrollMenu"));
-
-		var current:FlxSprite = menuItems.members[curSelected];
-		current.animation.play("idle");
-		current.updateHitbox();
-		current.screenCenter(X);
-
-		curSelected += huh;
-
-		if (curSelected >= menuItems.length)
-			curSelected = 0;
-		if (curSelected < 0)
-			curSelected = menuItems.length - 1;
-
-		var next:FlxSprite = menuItems.members[curSelected];
-		next.animation.play("selected");
-		next.centerOffsets();
-		next.screenCenter(X);
-
-		camFollow.setPosition(
-			next.getGraphicMidpoint().x,
-			next.getGraphicMidpoint().y - (menuItems.length > 4 ? menuItems.length * 8 : 0)
-		);
-	}
-
-	// Função nova para organizar o código de seleção
-	function handleSelection()
+	function handleAccept()
 	{
 		FlxG.sound.play(Paths.sound("confirmMenu"));
-
 		if (optionShit[curSelected] == "donate")
 		{
 			CoolUtil.browserLoad("https://ninja-muffin24.itch.io/funkin");
-			selectedSomethin = true;
 			return;
 		}
 
 		selectedSomethin = true;
-
 		if (ClientPrefs.data.flashing)
 			FlxFlicker.flicker(magenta, 1.1, 0.15, false);
 
-		var current:FlxSprite = menuItems.members[curSelected];
-		FlxFlicker.flicker(current, 1, 0.06, false, false, function(flick:FlxFlicker)
+		var current:FlxSprite = cast menuItems.members[curSelected];
+		FlxFlicker.flicker(current, 1, 0.06, false, false, function(flick)
 		{
-			switch(optionShit[curSelected])
+			switch (optionShit[curSelected])
 			{
-				case "story_mode":
-					MusicBeatState.switchState(new StoryMenuState());
-				case "freeplay":
-					MusicBeatState.switchState(new FreeplayState());
-
-				#if MODS_ALLOWED
-				case "mods":
-					MusicBeatState.switchState(new ModsMenuState());
-				#end
+				case "story_mode": MusicBeatState.switchState(new StoryMenuState());
+				case "freeplay": MusicBeatState.switchState(new FreeplayState());
+				#if MODS_ALLOWED case "mods": MusicBeatState.switchState(new ModsMenuState()); #end
 				case "options":
 					MusicBeatState.switchState(new OptionsState());
 					OptionsState.onPlayState = false;
@@ -244,11 +192,38 @@ class MainMenuState extends MusicBeatState
 			}
 		});
 
-		// Tween para os itens não selecionados
 		for (i in 0...menuItems.members.length)
 		{
 			if (i == curSelected) continue;
-			FlxTween.tween(menuItems.members[i], {alpha: 0}, 0.4, {ease: FlxEase.quadOut, onComplete: function(twn) menuItems.members[i].kill()});
+			var item:FlxSprite = cast menuItems.members[i];
+			FlxTween.tween(item, {alpha: 0}, 0.4, {ease: FlxEase.quadOut, onComplete: function(twn) item.kill()});
 		}
+	}
+
+	function openEditor()
+	{
+		selectedSomethin = true;
+		MusicBeatState.switchState(new MasterEditorMenu());
+	}
+
+	function changeItem(huh:Int = 0)
+	{
+		FlxG.sound.play(Paths.sound("scrollMenu"));
+		var current:FlxSprite = cast menuItems.members[curSelected];
+		current.animation.play("idle");
+		current.updateHitbox();
+		current.screenCenter(X);
+
+		curSelected += huh;
+		if (curSelected >= menuItems.members.length) curSelected = 0;
+		if (curSelected < 0) curSelected = menuItems.members.length - 1;
+
+		current = cast menuItems.members[curSelected];
+		current.animation.play("selected");
+		current.centerOffsets();
+		current.screenCenter(X);
+
+		var mid = current.getGraphicMidpoint();
+		camFollow.setPosition(mid.x, mid.y - (menuItems.members.length > 4 ? menuItems.members.length * 8 : 0));
 	}
 }
