@@ -9,8 +9,7 @@ import flixel.group.FlxGroup;
 import objects.Alphabet;
 import objects.Character;
 
-// Substitua MusicBeatState pelo correto
-import states.MusicGameState; 
+import substates.MusicBeatState; 
 
 import states.MainMenuState;
 import states.FreeplayState;
