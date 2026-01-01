@@ -66,7 +66,6 @@ class LuaUtils
 
 		if(allowMaps && isMap(instance))
 		{
-			//trace(instance);
 			instance.set(variable, value);
 			return value;
 		}
@@ -79,6 +78,7 @@ class LuaUtils
 		Reflect.setProperty(instance, variable, value);
 		return value;
 	}
+
 	public static function getVarInArray(instance:Dynamic, variable:String, allowMaps:Bool = false):Any
 	{
 		var splitProps:Array<String> = variable.split('[');
@@ -103,10 +103,7 @@ class LuaUtils
 		}
 		
 		if(allowMaps && isMap(instance))
-		{
-			//trace(instance);
 			return instance.get(variable);
-		}
 
 		if(PlayState.instance.variables.exists(variable))
 		{
@@ -132,7 +129,6 @@ class LuaUtils
 				var data:String = File.getContent(path);
 				try
 				{
-					//FunkinLua.luaTrace('getModSetting: Trying to find default value for "$saveTag" in Mod: "$modName"');
 					var parsedJson:Dynamic = tjson.TJSON.parse(data);
 					for (i in 0...parsedJson.length)
 					{
@@ -142,16 +138,10 @@ class LuaUtils
 							if(sub.type != 'keybind' && sub.type != 'key')
 							{
 								if(sub.value != null)
-								{
-									//FunkinLua.luaTrace('getModSetting: Found unsaved value "${sub.save}" in Mod: "$modName"');
 									settings.set(sub.save, sub.value);
-								}
 							}
 							else
-							{
-								//FunkinLua.luaTrace('getModSetting: Found unsaved keybind "${sub.save}" in Mod: "$modName"');
 								settings.set(sub.save, {keyboard: (sub.keyboard != null ? sub.keyboard : 'NONE'), gamepad: (sub.gamepad != null ? sub.gamepad : 'NONE')});
-							}
 						}
 					}
 					FlxG.save.data.modSettings.set(modName, settings);
@@ -187,14 +177,6 @@ class LuaUtils
 	
 	public static function isMap(variable:Dynamic)
 	{
-		/*switch(Type.typeof(variable)){
-			case ValueType.TClass(haxe.ds.StringMap) | ValueType.TClass(haxe.ds.ObjectMap) | ValueType.TClass(haxe.ds.IntMap) | ValueType.TClass(haxe.ds.EnumValueMap):
-				return true;
-			default:
-				return false;
-		}*/
-
-		//trace(variable);
 		if(variable.exists != null && variable.keyValueIterator != null) return true;
 		return false;
 	}
@@ -213,6 +195,7 @@ class LuaUtils
 		else Reflect.setProperty(leArray, variable, value);
 		return value;
 	}
+
 	public static function getGroupStuff(leArray:Dynamic, variable:String, ?allowMaps:Bool = false) {
 		var split:Array<String> = variable.split('.');
 		if(split.length > 1) {
@@ -324,12 +307,6 @@ class LuaUtils
 	{
 		switch(spriteType.toLowerCase().trim())
 		{
-			//case "texture" | "textureatlas" | "tex":
-				//spr.frames = AtlasFrameMaker.construct(image);
-
-			//case "texture_noaa" | "textureatlas_noaa" | "tex_noaa":
-				//spr.frames = AtlasFrameMaker.construct(image, null, true);
-
 			case "packer" | "packeratlas" | "pac":
 				spr.frames = Paths.getPackerAtlas(image);
 
@@ -340,9 +317,7 @@ class LuaUtils
 
 	public static function resetTextTag(tag:String) {
 		#if LUA_ALLOWED
-		if(!PlayState.instance.modchartTexts.exists(tag)) {
-			return;
-		}
+		if(!PlayState.instance.modchartTexts.exists(tag)) return;
 
 		var target:FlxText = PlayState.instance.modchartTexts.get(tag);
 		target.kill();
@@ -354,9 +329,7 @@ class LuaUtils
 
 	public static function resetSpriteTag(tag:String) {
 		#if LUA_ALLOWED
-		if(!PlayState.instance.modchartSprites.exists(tag)) {
-			return;
-		}
+		if(!PlayState.instance.modchartSprites.exists(tag)) return;
 
 		var target:ModchartSprite = PlayState.instance.modchartSprites.get(tag);
 		target.kill();
@@ -368,7 +341,8 @@ class LuaUtils
 
 	public static function cancelTween(tag:String) {
 		#if LUA_ALLOWED
-		if(PlayState.instance.modchartTweens.exists(tag)) {
+		if(PlayState.instance.modchartTweens.exists(tag))
+		{
 			PlayState.instance.modchartTweens.get(tag).cancel();
 			PlayState.instance.modchartTweens.get(tag).destroy();
 			PlayState.instance.modchartTweens.remove(tag);
@@ -386,7 +360,8 @@ class LuaUtils
 
 	public static function cancelTimer(tag:String) {
 		#if LUA_ALLOWED
-		if(PlayState.instance.modchartTimers.exists(tag)) {
+		if(PlayState.instance.modchartTimers.exists(tag))
+		{
 			var theTimer:FlxTimer = PlayState.instance.modchartTimers.get(tag);
 			theTimer.cancel();
 			theTimer.destroy();
@@ -503,11 +478,11 @@ class LuaUtils
 		}
 		return NORMAL;
 	}
-	
+
 	public static function typeToString(type:Int):String {
 		#if LUA_ALLOWED
 		switch(type) {
-			case Lua.LUA_TBOOLEAN: return "boolean";
+   case Lua.LUA_TBOOLEAN: return "boolean";
 			case Lua.LUA_TNUMBER: return "number";
 			case Lua.LUA_TSTRING: return "string";
 			case Lua.LUA_TTABLE: return "table";
