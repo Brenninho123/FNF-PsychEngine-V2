@@ -5,7 +5,7 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.tweens.FlxTween;
-import flixel.tweens.easing.Fluxease;
+import flixel.tweens.easing.FlxEase;
 import flixel.util.FlxTimer;
 
 class FlashingState extends MusicBeatState
