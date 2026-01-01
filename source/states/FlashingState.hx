@@ -5,7 +5,7 @@ import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.tweens.FlxTween;
-import flixel.tweens.easing.FlxEase;
+import flixel.tweens.easing.Linear; // Use Linear.easeNone
 import flixel.util.FlxTimer;
 
 class FlashingState extends MusicBeatState
@@ -58,11 +58,11 @@ class FlashingState extends MusicBeatState
                     FlxG.sound.play(Paths.sound('confirmMenu'));
 
                     #if mobile
-                    FlxTween.tween(warnTextMobile, {alpha:0}, 0.5, {ease:FlxEase.linear, onComplete:function(twn){
+                    FlxTween.tween(warnTextMobile, {alpha:0}, 0.5, { ease: Linear.easeNone, onComplete: function(twn) {
                         MusicBeatState.switchState(new TitleState());
                     }});
                     #else
-                    FlxTween.tween(warnText, {alpha:0}, 0.5, {ease:FlxEase.linear, onComplete:function(twn){
+                    FlxTween.tween(warnText, {alpha:0}, 0.5, { ease: Linear.easeNone, onComplete: function(twn) {
                         MusicBeatState.switchState(new TitleState());
                     }});
                     #end
@@ -72,11 +72,11 @@ class FlashingState extends MusicBeatState
                     FlxG.sound.play(Paths.sound('cancelMenu'));
 
                     #if mobile
-                    FlxTween.tween(warnTextMobile, {alpha:0}, 0.5, {ease:FlxEase.linear, onComplete:function(twn){
+                    FlxTween.tween(warnTextMobile, {alpha:0}, 0.5, { ease: Linear.easeNone, onComplete: function(twn) {
                         MusicBeatState.switchState(new TitleState());
                     }});
                     #else
-                    FlxTween.tween(warnText, {alpha:0}, 0.5, {ease:FlxEase.linear, onComplete:function(twn){
+                    FlxTween.tween(warnText, {alpha:0}, 0.5, { ease: Linear.easeNone, onComplete: function(twn) {
                         MusicBeatState.switchState(new TitleState());
                     }});
                     #end
