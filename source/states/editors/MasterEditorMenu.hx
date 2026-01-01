@@ -22,7 +22,7 @@ import states.editors.DialogueEditorState;
 import states.editors.DialogueCharacterEditorState;
 import states.editors.NoteSplashDebugState;
 
-class MasterEditorMenu extends MusicGameState
+class MasterEditorMenu extends MusicBeatState
 {
     var options:Array<String> = [
         'Chart Editor',
@@ -51,7 +51,7 @@ class MasterEditorMenu extends MusicGameState
 
         for (i in 0...options.length)
         {
-            var leText:Alphabet = new Alphabet(FlxG.width * 0.1, 200 + i * 50, options[i], true);
+            var leText:Alphabet = new Alphabet(FlxG.width / 2 - 150, 200 + i * 50, options[i], true);
             leText.isMenuItem = true;
             grpTexts.add(leText);
             leText.snapToPosition();
@@ -71,7 +71,7 @@ class MasterEditorMenu extends MusicGameState
             changeSelection(1);
 
         if (controls.BACK)
-            MusicGameState.switchState(new MainMenuState());
+            MusicBeatState.switchState(new MainMenuState());
 
         if (controls.ACCEPT)
         {
@@ -82,27 +82,32 @@ class MasterEditorMenu extends MusicGameState
                 case 'Character Editor':
                     LoadingState.loadAndSwitchState(new CharacterEditorState(Character.DEFAULT_CHARACTER, false));
                 case 'Week Editor':
-                    MusicGameState.switchState(new WeekEditorState());
+                    MusicBeatState.switchState(new WeekEditorState());
                 case 'Menu Character Editor':
-                    MusicGameState.switchState(new MenuCharacterEditorState());
+                    MusicBeatState.switchState(new MenuCharacterEditorState());
                 case 'Dialogue Editor':
                     LoadingState.loadAndSwitchState(new DialogueEditorState(), false);
                 case 'Dialogue Portrait Editor':
                     LoadingState.loadAndSwitchState(new DialogueCharacterEditorState(), false);
                 case 'Note Splash Debug':
-                    MusicGameState.switchState(new NoteSplashDebugState());
+                    MusicBeatState.switchState(new NoteSplashDebugState());
             }
 
             FlxG.sound.music.volume = 0;
             FreeplayState.destroyFreeplayVocals();
         }
 
-        // Cast necessário para acessar targetY e alpha
+        // Atualiza alfa e pulsar do item selecionado
         for (i in 0...grpTexts.members.length)
         {
             var item:Alphabet = cast grpTexts.members[i];
             item.targetY = i - curSelected;
             item.alpha = if(item.targetY == 0) 1 else 0.6;
+
+            if(item.targetY == 0)
+                item.scale.set(1.1, 1.1);
+            else
+                item.scale.set(1, 1);
         }
 
         super.update(elapsed);
@@ -110,8 +115,9 @@ class MasterEditorMenu extends MusicGameState
 
     function changeSelection(change:Int = 0)
     {
-        FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+        if (change == 0) return;
         curSelected += change;
+        FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
 
         if (curSelected < 0)
             curSelected = options.length - 1;
