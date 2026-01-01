@@ -9,11 +9,19 @@ import flixel.group.FlxGroup;
 import objects.Alphabet;
 import objects.Character;
 
-import states.MusicBeatState;
+import states.EditorState;
 import states.MainMenuState;
 import states.FreeplayState;
+import states.editors.ChartingState;
+import states.editors.CharacterEditorState;
+import states.editors.WeekEditorState;
+import states.editors.MenuCharacterEditorState;
+import states.editors.DialogueEditorState;
+import states.editors.DialogueCharacterEditorState;
+import states.editors.NoteSplashDebugState;
+import openfl.Assets;
 
-class MasterEditorMenu extends MusicBeatState
+class MasterEditorMenu extends EditorState
 {
     var options:Array<String> = [
         'Chart Editor',
@@ -25,24 +33,26 @@ class MasterEditorMenu extends MusicBeatState
         'Note Splash Debug'
     ];
 
-    private var grpTexts:FlxGroup<Alphabet>;
+    private var grpTexts:FlxGroup;
     private var curSelected:Int = 0;
 
     override function create()
     {
         FlxG.camera.bgColor = FlxColor.BLACK;
 
+        // Background
         var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
         bg.scrollFactor.set();
         bg.color = 0xFF353535;
         add(bg);
 
-        grpTexts = new FlxGroup<Alphabet>();
+        // Menu Texts
+        grpTexts = new FlxGroup();
         add(grpTexts);
 
         for (i in 0...options.length)
         {
-            var leText:Alphabet = new Alphabet(90, 320 + i * 50, options[i], true);
+            var leText:Alphabet = new Alphabet(FlxG.width * 0.1, 200 + i * 50, options[i], true);
             leText.isMenuItem = true;
             leText.targetY = i;
             grpTexts.add(leText);
@@ -63,7 +73,7 @@ class MasterEditorMenu extends MusicBeatState
             changeSelection(1);
 
         if (controls.BACK)
-            MusicBeatState.switchState(new MainMenuState());
+            EditorState.switchState(new MainMenuState());
 
         if (controls.ACCEPT)
         {
@@ -74,16 +84,17 @@ class MasterEditorMenu extends MusicBeatState
                 case 'Character Editor':
                     LoadingState.loadAndSwitchState(new CharacterEditorState(Character.DEFAULT_CHARACTER, false));
                 case 'Week Editor':
-                    MusicBeatState.switchState(new WeekEditorState());
+                    EditorState.switchState(new WeekEditorState());
                 case 'Menu Character Editor':
-                    MusicBeatState.switchState(new MenuCharacterEditorState());
+                    EditorState.switchState(new MenuCharacterEditorState());
                 case 'Dialogue Editor':
                     LoadingState.loadAndSwitchState(new DialogueEditorState(), false);
                 case 'Dialogue Portrait Editor':
                     LoadingState.loadAndSwitchState(new DialogueCharacterEditorState(), false);
                 case 'Note Splash Debug':
-                    MusicBeatState.switchState(new NoteSplashDebugState());
+                    EditorState.switchState(new NoteSplashDebugState());
             }
+
             FlxG.sound.music.volume = 0;
             FreeplayState.destroyFreeplayVocals();
         }
