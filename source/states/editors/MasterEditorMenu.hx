@@ -4,7 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import flixel.group.FlxTypedGroup;
+import flixel.group.FlxGroup;
 
 import objects.Alphabet;
 import objects.Character;
@@ -25,7 +25,7 @@ class MasterEditorMenu extends MusicBeatState
         'Note Splash Debug'
     ];
 
-    private var grpTexts:FlxTypedGroup<Alphabet>;
+    private var grpTexts:FlxGroup<Alphabet>;
     private var curSelected:Int = 0;
 
     override function create()
@@ -37,7 +37,7 @@ class MasterEditorMenu extends MusicBeatState
         bg.color = 0xFF353535;
         add(bg);
 
-        grpTexts = new FlxTypedGroup<Alphabet>();
+        grpTexts = new FlxGroup<Alphabet>();
         add(grpTexts);
 
         for (i in 0...options.length)
@@ -88,7 +88,6 @@ class MasterEditorMenu extends MusicBeatState
             FreeplayState.destroyFreeplayVocals();
         }
 
-        // Atualiza alpha e posição
         var index:Int = 0;
         for (item in grpTexts.members)
         {
