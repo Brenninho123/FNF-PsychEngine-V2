@@ -1,11 +1,13 @@
 package states;
 
+import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
-import flixel.addons.transition.FlxTransitionableState;
+import flixel.util.FlxColor;
 import flixel.effects.FlxFlicker;
 import flixel.tweens.FlxTween;
+import flixel.tweens.misc.VarTween;
 import flixel.tweens.easing.FlxEase;
 import lime.app.Application;
 import states.editors.MasterEditorMenu;
@@ -13,24 +15,22 @@ import options.OptionsState;
 
 class MainMenuState extends MusicBeatState
 {
-	public static var psychEngineVersion:String = '0.7.7'; // This is also used for Discord RPC
+	public static var psychEngineVersion:String = '0.7.7'; 
 	public static var curSelected:Int = 0;
 
 	var menuItems:Array<FlxSprite>;
-
 	var optionShit:Array<String> = [
 		'story_mode',
 		'freeplay',
-		
 		#if MODS_ALLOWED
 		'mods',
 		#end
-		
 		'options'
 	];
 
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
+	var selectedSomethin:Bool = false;
 
 	override function create()
 	{
@@ -83,8 +83,7 @@ class MainMenuState extends MusicBeatState
 			menuItem.animation.play('idle');
 			menuItems.push(menuItem);
 			var scr:Float = (optionShit.length - 4) * 0.135;
-			if (optionShit.length < 6)
-				scr = 0;
+			if (optionShit.length < 6) scr = 0;
 			menuItem.scrollFactor.set(0, scr);
 			menuItem.updateHitbox();
 			menuItem.screenCenter(X);
@@ -121,8 +120,6 @@ class MainMenuState extends MusicBeatState
 		FlxG.camera.follow(camFollow, null, 9);
 	}
 
-	var selectedSomethin:Bool = false;
-
 	override function update(elapsed:Float)
 	{
 		if (FlxG.sound.music.volume < 0.8)
@@ -134,11 +131,8 @@ class MainMenuState extends MusicBeatState
 
 		if (!selectedSomethin)
 		{
-			if (controls.UI_UP_P)
-				changeItem(-1);
-
-			if (controls.UI_DOWN_P)
-				changeItem(1);
+			if (controls.UI_UP_P) changeItem(-1);
+			if (controls.UI_DOWN_P) changeItem(1);
 
 			if (controls.BACK)
 			{
@@ -148,25 +142,9 @@ class MainMenuState extends MusicBeatState
 			}
 
 			#if mobile
-			if (controls.ACCEPT)
-			{
-				handleSelection();
-			}
-			else if (controls.justPressed('debug_1') || touchPad.buttonE.justPressed)
-			{
-				selectedSomethin = true;
-				MusicBeatState.switchState(new MasterEditorMenu());
-			}
+			if (controls.ACCEPT || touchPad.buttonE.justPressed) handleSelection();
 			#else
-			if (controls.ACCEPT)
-			{
-				handleSelection();
-			}
-			else if (controls.justPressed('debug_1'))
-			{
-				selectedSomethin = true;
-				MusicBeatState.switchState(new MasterEditorMenu());
-			}
+			if (controls.ACCEPT || controls.justPressed('debug_1')) handleSelection();
 			#end
 		}
 
@@ -175,37 +153,30 @@ class MainMenuState extends MusicBeatState
 
 	function changeItem(huh:Int = 0)
 	{
-		var oldItem:FlxSprite = cast menuItems[curSelected, FlxSprite];
+		var oldItem:FlxSprite = cast menuItems[curSelected];
 		FlxG.sound.play(Paths.sound('scrollMenu'));
 		oldItem.animation.play('idle');
 		oldItem.updateHitbox();
 		oldItem.screenCenter(X);
 
 		curSelected += huh;
-		if (curSelected >= menuItems.length)
-			curSelected = 0;
-		if (curSelected < 0)
-			curSelected = menuItems.length - 1;
+		if (curSelected >= menuItems.length) curSelected = 0;
+		if (curSelected < 0) curSelected = menuItems.length - 1;
 
-		var newItem:FlxSprite = cast menuItems[curSelected, FlxSprite];
+		var newItem:FlxSprite = cast menuItems[curSelected];
 		newItem.animation.play('selected');
 		newItem.centerOffsets();
 		newItem.screenCenter(X);
 
-		camFollow.setPosition(newItem.getGraphicMidpoint().x,
-			newItem.getGraphicMidpoint().y - (menuItems.length > 4 ? menuItems.length * 8 : 0));
-		scaleMenuItem(newItem, 1.1);
-	}
-
-	function scaleMenuItem(item:FlxSprite, target:Float)
-	{
-		if (item != null)
-			FlxTween.tween(item, { scaleX: target, scaleY: target }, 0.2, {ease: FlxEase.quadOut});
+		camFollow.setPosition(
+			newItem.getGraphicMidpoint().x,
+			newItem.getGraphicMidpoint().y - (menuItems.length > 4 ? menuItems.length * 8 : 0)
+		);
 	}
 
 	function handleSelection()
 	{
-		var selectedItem:FlxSprite = cast menuItems[curSelected, FlxSprite];
+		var selectedItem:FlxSprite = cast menuItems[curSelected];
 		FlxG.sound.play(Paths.sound('confirmMenu'));
 		selectedSomethin = true;
 
@@ -245,13 +216,10 @@ class MainMenuState extends MusicBeatState
 		for (i in 0...menuItems.length)
 		{
 			if (i == curSelected) continue;
-			var otherItem:FlxSprite = cast menuItems[i, FlxSprite];
+			var otherItem:FlxSprite = cast menuItems[i];
 			FlxTween.tween(otherItem, { alpha: 0 }, 0.4, {
 				ease: FlxEase.quadOut,
-				onComplete: function(twn:FlxTween)
-				{
-					otherItem.kill();
-				}
+				onComplete: function(twn:FlxTween) { otherItem.kill(); }
 			});
 		}
 	}
