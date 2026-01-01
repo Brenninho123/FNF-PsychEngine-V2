@@ -1,9 +1,7 @@
 package states.editors;
 
 import backend.WeekData;
-
 import objects.Character;
-
 import states.MainMenuState;
 import states.FreeplayState;
 
@@ -29,7 +27,6 @@ class MasterEditorMenu extends MusicBeatState
 	{
 		FlxG.camera.bgColor = FlxColor.BLACK;
 		#if DISCORD_ALLOWED
-		// Updating Discord Rich Presence
 		DiscordClient.changePresence("Editors Main Menu", null);
 		#end
 
@@ -41,15 +38,19 @@ class MasterEditorMenu extends MusicBeatState
 		grpTexts = new FlxTypedGroup<Alphabet>();
 		add(grpTexts);
 
+		// CENTRALIZANDO O MENU
+		var startY:Float = 200;
+		var spacing:Float = 60;
 		for (i in 0...options.length)
 		{
-			var leText:Alphabet = new Alphabet(90, 320, options[i], true);
+			var textWidth:Float = Paths.fontWidth("vcr.ttf", options[i], 32); // largura aproximada
+			var leText:Alphabet = new Alphabet((FlxG.width - textWidth) / 2, startY + i * spacing, options[i], true);
 			leText.isMenuItem = true;
 			leText.targetY = i;
 			grpTexts.add(leText);
 			leText.snapToPosition();
 		}
-		
+
 		#if MODS_ALLOWED
 		var textBG:FlxSprite = new FlxSprite(0, FlxG.height - 42).makeGraphic(FlxG.width, 42, 0xFF000000);
 		textBG.alpha = 0.6;
@@ -59,7 +60,7 @@ class MasterEditorMenu extends MusicBeatState
 		directoryTxt.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER);
 		directoryTxt.scrollFactor.set();
 		add(directoryTxt);
-		
+
 		for (folder in Mods.getModDirectories())
 		{
 			directories.push(folder);
@@ -69,8 +70,8 @@ class MasterEditorMenu extends MusicBeatState
 		if(found > -1) curDirectory = found;
 		changeDirectory();
 		#end
-		changeSelection();
 
+		changeSelection();
 		FlxG.mouse.visible = false;
 
 		#if mobile
@@ -86,24 +87,12 @@ class MasterEditorMenu extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
-		if (controls.UI_UP_P)
-		{
-			changeSelection(-1);
-		}
-		if (controls.UI_DOWN_P)
-		{
-			changeSelection(1);
-		}
-		
+		if (controls.UI_UP_P) changeSelection(-1);
+		if (controls.UI_DOWN_P) changeSelection(1);
+
 		#if MODS_ALLOWED
-		if(controls.UI_LEFT_P)
-		{
-			changeDirectory(-1);
-		}
-		if(controls.UI_RIGHT_P)
-		{
-			changeDirectory(1);
-		}
+		if (controls.UI_LEFT_P) changeDirectory(-1);
+		if (controls.UI_RIGHT_P) changeDirectory(1);
 		#end
 
 		if (controls.BACK)
@@ -113,26 +102,21 @@ class MasterEditorMenu extends MusicBeatState
 
 		if (controls.ACCEPT)
 		{
-			switch(options[curSelected]) {
-				case 'Chart Editor'://felt it would be cool maybe
-					LoadingState.loadAndSwitchState(new ChartingState(), false);
-				case 'Character Editor':
-					LoadingState.loadAndSwitchState(new CharacterEditorState(Character.DEFAULT_CHARACTER, false));
-				case 'Week Editor':
-					MusicBeatState.switchState(new WeekEditorState());
-				case 'Menu Character Editor':
-					MusicBeatState.switchState(new MenuCharacterEditorState());
-				case 'Dialogue Editor':
-					LoadingState.loadAndSwitchState(new DialogueEditorState(), false);
-				case 'Dialogue Portrait Editor':
-					LoadingState.loadAndSwitchState(new DialogueCharacterEditorState(), false);
-				case 'Note Splash Debug':
-					MusicBeatState.switchState(new NoteSplashDebugState());
+			switch(options[curSelected])
+			{
+				case 'Chart Editor': LoadingState.loadAndSwitchState(new ChartingState(), false);
+				case 'Character Editor': LoadingState.loadAndSwitchState(new CharacterEditorState(Character.DEFAULT_CHARACTER, false));
+				case 'Week Editor': MusicBeatState.switchState(new WeekEditorState());
+				case 'Menu Character Editor': MusicBeatState.switchState(new MenuCharacterEditorState());
+				case 'Dialogue Editor': LoadingState.loadAndSwitchState(new DialogueEditorState(), false);
+				case 'Dialogue Portrait Editor': LoadingState.loadAndSwitchState(new DialogueCharacterEditorState(), false);
+				case 'Note Splash Debug': MusicBeatState.switchState(new NoteSplashDebugState());
 			}
 			FlxG.sound.music.volume = 0;
 			FreeplayState.destroyFreeplayVocals();
 		}
-		
+
+		// Atualiza a posição vertical e alfa dos itens
 		var bullShit:Int = 0;
 		for (item in grpTexts.members)
 		{
@@ -140,14 +124,9 @@ class MasterEditorMenu extends MusicBeatState
 			bullShit++;
 
 			item.alpha = 0.6;
-			// item.setGraphicSize(Std.int(item.width * 0.8));
-
-			if (item.targetY == 0)
-			{
-				item.alpha = 1;
-				// item.setGraphicSize(Std.int(item.width));
-			}
+			if (item.targetY == 0) item.alpha = 1;
 		}
+
 		super.update(elapsed);
 	}
 
@@ -157,10 +136,8 @@ class MasterEditorMenu extends MusicBeatState
 
 		curSelected += change;
 
-		if (curSelected < 0)
-			curSelected = options.length - 1;
-		if (curSelected >= options.length)
-			curSelected = 0;
+		if (curSelected < 0) curSelected = options.length - 1;
+		if (curSelected >= options.length) curSelected = 0;
 	}
 
 	#if MODS_ALLOWED
@@ -170,12 +147,11 @@ class MasterEditorMenu extends MusicBeatState
 
 		curDirectory += change;
 
-		if(curDirectory < 0)
-			curDirectory = directories.length - 1;
-		if(curDirectory >= directories.length)
-			curDirectory = 0;
-	
+		if(curDirectory < 0) curDirectory = directories.length - 1;
+		if(curDirectory >= directories.length) curDirectory = 0;
+
 		WeekData.setDirectoryFromWeek();
+
 		if(directories[curDirectory] == null || directories[curDirectory].length < 1)
 			directoryTxt.text = '< No Mod Directory Loaded >';
 		else
@@ -183,6 +159,7 @@ class MasterEditorMenu extends MusicBeatState
 			Mods.currentModDirectory = directories[curDirectory];
 			directoryTxt.text = '< Loaded Mod Directory: ' + Mods.currentModDirectory + ' >';
 		}
+
 		directoryTxt.text = directoryTxt.text.toUpperCase();
 	}
 	#end
