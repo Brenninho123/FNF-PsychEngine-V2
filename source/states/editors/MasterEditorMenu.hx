@@ -9,7 +9,9 @@ import flixel.group.FlxGroup;
 import objects.Alphabet;
 import objects.Character;
 
-import states.MusicBeatState;
+// Substitua MusicBeatState pelo correto
+import states.MusicGameState; 
+
 import states.MainMenuState;
 import states.FreeplayState;
 
@@ -21,7 +23,7 @@ import states.editors.DialogueEditorState;
 import states.editors.DialogueCharacterEditorState;
 import states.editors.NoteSplashDebugState;
 
-class MasterEditorMenu extends MusicBeatState
+class MasterEditorMenu extends MusicGameState
 {
     var options:Array<String> = [
         'Chart Editor',
@@ -40,13 +42,11 @@ class MasterEditorMenu extends MusicBeatState
     {
         FlxG.camera.bgColor = FlxColor.BLACK;
 
-        // Background
         var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
         bg.scrollFactor.set();
         bg.color = 0xFF353535;
         add(bg);
 
-        // Menu Texts
         grpTexts = new FlxGroup();
         add(grpTexts);
 
@@ -54,7 +54,6 @@ class MasterEditorMenu extends MusicBeatState
         {
             var leText:Alphabet = new Alphabet(FlxG.width * 0.1, 200 + i * 50, options[i], true);
             leText.isMenuItem = true;
-            leText.targetY = i;
             grpTexts.add(leText);
             leText.snapToPosition();
         }
@@ -73,7 +72,7 @@ class MasterEditorMenu extends MusicBeatState
             changeSelection(1);
 
         if (controls.BACK)
-            MusicBeatState.switchState(new MainMenuState());
+            MusicGameState.switchState(new MainMenuState());
 
         if (controls.ACCEPT)
         {
@@ -84,27 +83,27 @@ class MasterEditorMenu extends MusicBeatState
                 case 'Character Editor':
                     LoadingState.loadAndSwitchState(new CharacterEditorState(Character.DEFAULT_CHARACTER, false));
                 case 'Week Editor':
-                    MusicBeatState.switchState(new WeekEditorState());
+                    MusicGameState.switchState(new WeekEditorState());
                 case 'Menu Character Editor':
-                    MusicBeatState.switchState(new MenuCharacterEditorState());
+                    MusicGameState.switchState(new MenuCharacterEditorState());
                 case 'Dialogue Editor':
                     LoadingState.loadAndSwitchState(new DialogueEditorState(), false);
                 case 'Dialogue Portrait Editor':
                     LoadingState.loadAndSwitchState(new DialogueCharacterEditorState(), false);
                 case 'Note Splash Debug':
-                    MusicBeatState.switchState(new NoteSplashDebugState());
+                    MusicGameState.switchState(new NoteSplashDebugState());
             }
 
             FlxG.sound.music.volume = 0;
             FreeplayState.destroyFreeplayVocals();
         }
 
-        var index:Int = 0;
-        for (item in grpTexts.members)
+        // Cast necessário para acessar targetY e alpha
+        for (i in 0...grpTexts.members.length)
         {
-            item.targetY = index - curSelected;
+            var item:Alphabet = cast grpTexts.members[i];
+            item.targetY = i - curSelected;
             item.alpha = if(item.targetY == 0) 1 else 0.6;
-            index++;
         }
 
         super.update(elapsed);
