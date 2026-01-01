@@ -9,9 +9,10 @@ import flixel.group.FlxGroup;
 import objects.Alphabet;
 import objects.Character;
 
-import states.EditorState;
+import states.MusicBeatState;
 import states.MainMenuState;
 import states.FreeplayState;
+
 import states.editors.ChartingState;
 import states.editors.CharacterEditorState;
 import states.editors.WeekEditorState;
@@ -19,9 +20,8 @@ import states.editors.MenuCharacterEditorState;
 import states.editors.DialogueEditorState;
 import states.editors.DialogueCharacterEditorState;
 import states.editors.NoteSplashDebugState;
-import openfl.Assets;
 
-class MasterEditorMenu extends EditorState
+class MasterEditorMenu extends MusicBeatState
 {
     var options:Array<String> = [
         'Chart Editor',
@@ -73,7 +73,7 @@ class MasterEditorMenu extends EditorState
             changeSelection(1);
 
         if (controls.BACK)
-            EditorState.switchState(new MainMenuState());
+            MusicBeatState.switchState(new MainMenuState());
 
         if (controls.ACCEPT)
         {
@@ -84,15 +84,15 @@ class MasterEditorMenu extends EditorState
                 case 'Character Editor':
                     LoadingState.loadAndSwitchState(new CharacterEditorState(Character.DEFAULT_CHARACTER, false));
                 case 'Week Editor':
-                    EditorState.switchState(new WeekEditorState());
+                    MusicBeatState.switchState(new WeekEditorState());
                 case 'Menu Character Editor':
-                    EditorState.switchState(new MenuCharacterEditorState());
+                    MusicBeatState.switchState(new MenuCharacterEditorState());
                 case 'Dialogue Editor':
                     LoadingState.loadAndSwitchState(new DialogueEditorState(), false);
                 case 'Dialogue Portrait Editor':
                     LoadingState.loadAndSwitchState(new DialogueCharacterEditorState(), false);
                 case 'Note Splash Debug':
-                    EditorState.switchState(new NoteSplashDebugState());
+                    MusicBeatState.switchState(new NoteSplashDebugState());
             }
 
             FlxG.sound.music.volume = 0;
